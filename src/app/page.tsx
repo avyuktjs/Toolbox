@@ -8,9 +8,9 @@ export default function ToolboxPage() {
       <div className="relative mb-2">
         <div
           aria-hidden
-          className="absolute inset-x-2 top-2 bottom-0 rounded-[28px] bg-[linear-gradient(180deg,#2634cf_0%,#1d43f2_48%,#2f7cff_100%)]"
+          className="absolute inset-0 rounded-b-[28px] bg-[linear-gradient(180deg,#2634cf_0%,#1d43f2_48%,#2f7cff_100%)]"
         >
-          <div className="absolute inset-0 rounded-[28px] bg-[radial-gradient(120%_120%_at_50%_-20%,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0)_55%)]" />
+          <div className="absolute inset-0 rounded-b-[28px] bg-[radial-gradient(120%_120%_at_50%_-20%,rgba(255,255,255,0.16)_0%,rgba(255,255,255,0)_55%)]" />
         </div>
 
         <div className="relative mx-auto flex min-h-[84svh] w-full max-w-4xl flex-col items-center justify-center px-4 py-24 text-center sm:px-6 sm:py-28">
