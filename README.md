@@ -1,7 +1,9 @@
 # Toolbox
 
 [![CI](https://github.com/avyuktjs/Toolbox/actions/workflows/ci.yml/badge.svg)](https://github.com/avyuktjs/Toolbox/actions/workflows/ci.yml)
-[![MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/avyuktjs/Toolbox/blob/main/LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/avyuktjs/Toolbox/blob/main/LICENSE)
+[![Next.js 16](https://img.shields.io/badge/next.js-16-black.svg)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/typescript-5-3178c6.svg)](https://www.typescriptlang.org)
 
 Free, instant web utilities — a media downloader, an FFmpeg converter, and a shelf of small ones.
 
