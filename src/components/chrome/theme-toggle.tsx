@@ -10,11 +10,14 @@ export function ThemeToggle() {
   const mounted = useMounted();
 
   const dark = resolvedTheme === "dark";
+  // neutral chrome until mounted, so server and client HTML agree
+  const label = mounted ? (dark ? "Switch to light theme" : "Switch to dark theme") : "Toggle theme";
+  const tip = mounted ? (dark ? "Switch to light" : "Switch to dark") : "Toggle theme";
   return (
-    <Tooltip content={dark ? "Switch to light" : "Switch to dark"}>
+    <Tooltip content={tip}>
       <button
         type="button"
-        aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
+        aria-label={label}
         onClick={() => setTheme(dark ? "light" : "dark")}
         className="grid size-9 place-items-center rounded-[7px] border border-transparent text-ink2 transition-colors hover:border-line hover:text-ink"
       >

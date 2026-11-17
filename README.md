@@ -57,6 +57,11 @@ brew install ffmpeg yt-dlp
 - **Privacy:** uploads and conversions live in `.toolbox-tmp/` under the project root and are swept after 15 minutes. History is `localStorage` on your device; the server never knows what you did.
 - **Limits:** 300 MB per upload, rate-limited per IP (20/min inspect, 10/min convert/download), single-node deploys.
 
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) — short version: honest output
+only, files are temporary, no accounts, no new deps without a reason.
+
 ## License
 
 MIT — see [LICENSE](./LICENSE).
