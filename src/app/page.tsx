@@ -3,8 +3,8 @@ import { TOOLS } from "@/features/tools/registry";
 
 export default function ToolboxPage() {
   return (
-    <section className="relative">
-      {/* blue hero — a real page background, the nav floats inside it */}
+    <section className="relative -mt-14 sm:-mt-[3.875rem]">
+      {/* blue hero — fills the top under the floating nav */}
       <div className="relative mb-2">
         <div
           aria-hidden
