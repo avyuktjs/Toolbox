@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.toolbox-tmp/
+
+# agent harness files
+/AGENTS.md

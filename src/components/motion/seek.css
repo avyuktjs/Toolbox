@@ -1,0 +1,115 @@
+/* Seek — a search lens that becomes a field.
+   One object, not two: everything follows from that. A single box
+   whose WIDTH is the state; the lens and the field are both inside
+   it the whole time. The lens sits at a fixed inset that centres it
+   at the shut width and aligns the field at the open width, so the
+   "travelling" lens never animates — the box grows around a mark
+   that stayed put. */
+
+.sek {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: var(--shut, 44px);
+  width: var(--span, 232px);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sek-skin {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: var(--shut, 44px);
+  width: var(--w, var(--shut, 44px));
+  border-radius: 999px;
+  background: var(--panel);
+  border: 1px solid var(--line-2);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.06), 0 4px 14px rgb(0 0 0 / 0.05);
+  transition: box-shadow 200ms ease;
+}
+.dark .sek-skin {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 14px rgb(0 0 0 / 0.35);
+}
+.sek[data-open="true"] .sek-skin {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08), 0 8px 28px rgb(0 0 0 / 0.1);
+}
+.dark .sek[data-open="true"] .sek-skin {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 8px 28px rgb(0 0 0 / 0.45);
+}
+
+.sek[data-press="true"] .sek-skin {
+  transform: scale(0.92);
+  transform-origin: right center;
+}
+
+.sek-lens {
+  position: absolute;
+  left: var(--inset, 12px);
+  top: 50%;
+  width: var(--lens, 18px);
+  height: var(--lens, 18px);
+  transform: translateY(-50%);
+  z-index: 1;
+  pointer-events: none;
+}
+.sek-lens circle,
+.sek-lens path {
+  stroke: var(--ink-2);
+  stroke-width: 2;
+  stroke-linecap: round;
+  fill: none;
+  transition: stroke 160ms ease;
+}
+.sek[data-open="true"] .sek-lens circle,
+.sek[data-open="true"] .sek-lens path {
+  stroke: var(--accent);
+}
+.sek[data-busy="true"] .sek-lens circle {
+  stroke-width: 2.6;
+}
+.sek-hit {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.sek-hit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.sek-field {
+  position: relative;
+  z-index: 0;
+  height: 100%;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  outline: none;
+  padding-left: calc(var(--inset, 12px) + var(--lens, 18px) + 10px);
+  padding-right: 16px;
+  font-family: var(--font-inter), "Helvetica Neue", sans-serif;
+  font-size: 15px;
+  color: var(--ink);
+  caret-color: var(--accent);
+  opacity: var(--say, 0);
+}
+.sek-field::placeholder {
+  color: var(--ink-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sek-skin,
+  .sek-lens circle,
+  .sek-lens path {
+    transition: none;
+  }
+}

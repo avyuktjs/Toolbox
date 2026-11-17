@@ -1,0 +1,195 @@
+/* Upload box — THE BOX in the converter's tray panel.
+   A drop target with spring physics and a digestive system:
+   files are sucked in, shown uploading with a rolling counter,
+   ticked, and spat out to the bench. */
+
+.dzone {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  min-height: 15.5rem;
+  border-radius: 18px;
+  border: 1.5px dashed var(--line-2);
+  background: var(--sunken);
+  text-align: center;
+  transition: scale 0.34s cubic-bezier(0.3, 1.35, 0.4, 1),
+    border-color 200ms ease, background 200ms ease;
+  outline: none;
+}
+.dzone[data-over="true"] {
+  scale: 1.03;
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 7%, var(--sunken));
+}
+.dzone[data-over="true"] .dzone-icon {
+  transform: translateY(-5px);
+  color: var(--accent);
+}
+.dzone-icon {
+  transition: transform 240ms cubic-bezier(0.3, 1.4, 0.4, 1), color 200ms ease;
+  color: var(--ink-3);
+}
+
+/* the gulp — a small swallow when the upload lands */
+@keyframes dzone-gulp {
+  0% { transform: scaleY(1); }
+  30% { transform: scaleY(0.9) scaleX(1.05); }
+  60% { transform: scaleY(1.06) scaleX(0.96); }
+  100% { transform: scaleY(1); }
+}
+.dzone[data-gulp="true"] {
+  animation: dzone-gulp 460ms cubic-bezier(0.3, 1.3, 0.4, 1);
+}
+
+/* refusal shake — matches the Bench's refusal grammar */
+@keyframes dzone-shake {
+  0%, 100% { transform: translateX(0); }
+  18% { transform: translateX(-8px); }
+  36% { transform: translateX(7px); }
+  54% { transform: translateX(-5px); }
+  72% { transform: translateX(3px); }
+}
+.dzone[data-refuse="true"] {
+  animation: dzone-shake 420ms ease;
+  border-color: var(--danger);
+}
+.dzone[data-refuse="true"] .dzone-say b {
+  color: var(--danger);
+}
+
+/* upload rows */
+.dzone-rows {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.dzone-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  text-align: left;
+}
+.dzone-row [data-refuse-row] {
+  /* per-file refusal row tint */
+}
+.dzone-row-error {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--danger) 45%, transparent);
+}
+
+.dzone-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dzone-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-plex), monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.dzone-track {
+  height: 3px;
+  border-radius: 999px;
+  background: var(--sunken);
+  overflow: hidden;
+  margin-top: 4px;
+}
+.dzone-bar {
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  background: var(--accent);
+  transition: transform 120ms linear;
+}
+.dzone-row-error .dzone-bar {
+  background: var(--danger);
+}
+
+/* the tick’s reserved room keeps the box a stable size */
+.dzone-tail {
+  width: 26px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+}
+.dzone-tick {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--ok);
+  color: var(--accent-on);
+  animation: dzone-tick-in 380ms cubic-bezier(0.2, 1.6, 0.3, 1);
+}
+@keyframes dzone-tick-in {
+  from { transform: scale(0.3); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* rolling odometer digits for the percentage */
+.rz {
+  display: inline-flex;
+  align-items: baseline;
+  font-family: var(--font-plex), monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.rz-col {
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+  line-height: 1;
+}
+.rz-strip {
+  display: flex;
+  flex-direction: column;
+  transition: transform 160ms cubic-bezier(0.3, 1.3, 0.4, 1);
+}
+.rz-strip > span {
+  height: 1em;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+}
+.rz-pct {
+  margin-left: 1px;
+  color: var(--ink-3);
+}
+
+/* ghost tile that flies into the box */
+.dzone-ghost {
+  position: fixed;
+  z-index: 50;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dzone,
+  .dzone-icon,
+  .dzone-bar,
+  .rz-strip,
+  .dzone-tick {
+    transition: none;
+    animation: none;
+  }
+}

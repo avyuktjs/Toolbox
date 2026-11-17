@@ -1,26 +1,257 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ------------------------------------------------------------------ */
+/*  TOOLBOX — design tokens                                              */
+/*  Apple idiom: #fbfbfd canvas, ink #1d1d1f, one #0071e3 accent.       */
+/* ------------------------------------------------------------------ */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+
+  --paper: #fbfbfd;
+  --panel: #ffffff;
+  --sunken: #f5f5f7;
+  --ink: #1d1d1f;
+  --ink-2: #6e6e73;
+  --ink-3: #86868b;
+  --line: #e8e8ed;
+  --line-2: #d2d2d7;
+
+  --accent: #0071e3;
+  --accent-ink: #0077ed;
+  --accent-soft: #0071e314;
+  --accent-on: #ffffff;
+  --brand: #1d43f2;
+
+  --ok: #248a3d;
+  --ok-soft: #248a3d14;
+  --danger: #d70015;
+  --danger-soft: #d7001512;
+  --warn: #8a6a0a;
+
+  --hard: #00000014;
+
+  /* shadcn semantic slots, mapped onto the Toolbox palette */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--panel);
+  --card-foreground: var(--ink);
+  --popover: var(--panel);
+  --popover-foreground: var(--ink);
+  --primary: var(--accent);
+  --primary-foreground: var(--accent-on);
+  --secondary: var(--sunken);
+  --secondary-foreground: var(--ink);
+  --muted: var(--sunken);
+  --muted-foreground: var(--ink-2);
+  --accent-foreground: var(--accent-on);
+  --destructive: var(--danger);
+  --border: var(--line);
+  --input: var(--line-2);
+  --ring: var(--accent);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --paper: #000000;
+  --panel: #1d1d1f;
+  --sunken: #161617;
+  --ink: #f5f5f7;
+  --ink-2: #a1a1a6;
+  --ink-3: #6e6e73;
+  --line: #2c2c2e;
+  --line-2: #3a3a3c;
+
+  --accent: #0071e3;
+  --accent-ink: #2997ff;
+  --accent-soft: #2997ff24;
+  --accent-on: #ffffff;
+
+  --ok: #30d158;
+  --ok-soft: #30d1581f;
+  --danger: #ff453a;
+  --danger-soft: #ff453a1a;
+  --warn: #ffd60a;
+
+  --hard: #00000066;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--panel);
+  --card-foreground: var(--ink);
+  --popover: var(--panel);
+  --popover-foreground: var(--ink);
+  --primary: var(--accent);
+  --primary-foreground: var(--accent-on);
+  --secondary: var(--sunken);
+  --secondary-foreground: var(--ink);
+  --muted: var(--sunken);
+  --muted-foreground: var(--ink-2);
+  --accent-foreground: var(--accent-on);
+  --destructive: var(--danger);
+  --border: var(--line);
+  --input: var(--line-2);
+  --ring: var(--accent);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-panel: var(--panel);
+  --color-sunken: var(--sunken);
+  --color-ink: var(--ink);
+  --color-ink2: var(--ink-2);
+  --color-ink3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line2: var(--line-2);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-on: var(--accent-on);
+  --color-brand: var(--brand);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warn: var(--warn);
+
+  --font-display: var(--font-inter), "Helvetica Neue", sans-serif;
+  --font-sans: var(--font-inter), "Helvetica Neue", sans-serif;
+  --font-mono: var(--font-plex), "SFMono-Regular", monospace;
+
+  --radius-panel: 20px;
+  --radius-control: 12px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-inter), "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv11", "ss01";
+}
+
+::selection {
+  background: #0071e333;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* the palette field IS the focus target — no box around it */
+.tool-search-input:focus-visible {
+  outline: none;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-2) transparent;
+}
+
+/* ---------- reusable primitives ---------- */
+
+.t-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* the one soft shadow, used on the console and dossier */
+.soft-shadow {
+  box-shadow:
+    0 24px 60px rgb(0 0 0 / 0.12),
+    0 2px 8px rgb(0 0 0 / 0.06);
+}
+.dark .soft-shadow {
+  box-shadow:
+    0 24px 60px rgb(0 0 0 / 0.55),
+    0 2px 8px rgb(0 0 0 / 0.4);
+}
+
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.38rem;
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  background: var(--sunken);
+  color: var(--ink-2);
+  font-family: var(--font-plex), monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.rule-dashed {
+  border-top: 1px dashed var(--line-2);
+}
+
+/* scanning shimmer for skeleton rows, restrained */
+@keyframes tb-scan {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+.scan {
+  background-image: linear-gradient(
+    100deg,
+    transparent 20%,
+    color-mix(in srgb, var(--ink) 5%, transparent) 40%,
+    color-mix(in srgb, var(--ink) 9%, transparent) 50%,
+    color-mix(in srgb, var(--ink) 5%, transparent) 60%,
+    transparent 80%
+  );
+  background-size: 200% 100%;
+  animation: tb-scan 1.6s linear infinite;
+}
+
+/* URL console: the box accepts the link (inhale + gulp) or refuses it (shake) */
+@keyframes tb-inhale {
+  0% { transform: scale(1); }
+  32% { transform: scale(1.035); }
+  68% { transform: scale(0.985); }
+  100% { transform: scale(1); }
+}
+.tb-inhale {
+  animation: tb-inhale 0.55s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+
+@keyframes tb-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  36% { transform: translateX(7px); }
+  54% { transform: translateX(-5px); }
+  72% { transform: translateX(3px); }
+}
+.tb-shake {
+  animation: tb-shake 0.4s ease both;
+}
+
+/* indeterminate processing bar */
+@keyframes tb-swipe {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(340%); }
+}
+.tb-swipe {
+  animation: tb-swipe 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan,
+  .tb-inhale,
+  .tb-shake,
+  .tb-swipe { animation: none; }
+  html { scroll-behavior: auto; }
 }
