@@ -7,6 +7,8 @@
 
 Free, instant web utilities — a media downloader, an FFmpeg converter, and a shelf of small ones.
 
+![The Toolbox home page](./docs/screenshot.png)
+
 No accounts. Files are deleted after 15 minutes.
 
 > Work in progress — new tools land here regularly. Built by [avyuktjs](https://github.com/avyuktjs) · [vishy.dino.icu](https://vishy.dino.icu/) · [source](https://github.com/avyuktjs/Toolbox)
