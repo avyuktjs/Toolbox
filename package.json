@@ -45,7 +45,7 @@
   "engines": {
     "node": ">=20.9"
   },
-  "description": "A growing set of free, instant web utilities — media downloader, FFmpeg converter, and a shelf of small tools. No accounts, no uploads, files deleted after 15 minutes.",
+  "description": "A growing shelf of free, instant everyday web utilities \u2014 one tool per route, all on one tab. No accounts, no uploads.",
   "license": "MIT",
   "author": "Avyukt Sehgal (https://vishy.dino.icu/)",
   "repository": {

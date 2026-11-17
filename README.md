@@ -5,7 +5,7 @@
 [![Next.js 16](https://img.shields.io/badge/next.js-16-black.svg)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/typescript-5-3178c6.svg)](https://www.typescriptlang.org)
 
-Free, instant web utilities — a media downloader, an FFmpeg converter, and a shelf of small ones.
+A growing shelf of free, instant everyday web tools. No accounts, no sign-up — just open and use.
 
 ![The Toolbox home page](./docs/screenshot.png)
 
@@ -13,10 +13,13 @@ No accounts. Files are deleted after 15 minutes.
 
 > Work in progress — new tools land here regularly. Built by [avyuktjs](https://github.com/avyuktjs) · [vishy.dino.icu](https://vishy.dino.icu/) · [source](https://github.com/avyuktjs/Toolbox)
 
-## What's in it
+## What's on the bench
+
+The shelf keeps growing — one utility per route, all free:
 
 | Route | What it does |
 | --- | --- |
+| `/` | The bench — every tool on one tab, filtered as you type |
 | `/downloader` | Paste a link, pick resolution and format (MP4/WebM video, MP3/WAV/AAC audio), keep the file |
 | `/convert` | FFmpeg bench for local files — container conversion, audio extraction, custom CRF |
 | `/history` | What you've made, kept in your browser only; entries expire when the files do |
