@@ -2,6 +2,13 @@
 
 Notable changes to Toolbox, most recent first.
 
+## [Unreleased] — 2026-11-17
+
+- `/image` — Image Studio: PNG ↔ JPEG ↔ WebP, resize/crop/rotate, all local
+- `/sites` — the full yt-dlp supported-sites index, searchable
+- Nav: live GitHub star counter
+- CI now runs the test suite on every push
+
 ## [0.1.0] — 2026-11-17
 
 Initial public release.

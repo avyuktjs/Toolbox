@@ -35,6 +35,8 @@ The shelf keeps growing — one utility per route, all free:
 | `/timestamp` | Epoch ↔ date, both directions, live clock |
 | `/diff` | Line diff with no dependencies |
 | `/lorem` | Deterministic placeholder text |
+| `/image` | PNG ↔ JPEG ↔ WebP — resize, crop and rotate, local always |
+| `/sites` | The full index of yt-dlp-supported source sites |
 
 ## Stack
 
