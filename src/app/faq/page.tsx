@@ -15,7 +15,7 @@ export default function FaqPage() {
         FAQ
       </p>
       <h1 className="mt-3 font-display text-[clamp(2.5rem,7vw,4rem)] font-semibold leading-[0.98] tracking-[-0.03em] text-ink">
-        Honest answers<span className="text-accent">.</span>
+        Questions, answered<span className="text-accent">.</span>
       </h1>
       <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-ink2">
         Everything you might want to know about how Toolbox works, what it won&rsquo;t

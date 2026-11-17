@@ -11,7 +11,7 @@ export default function DiffToolPage() {
   return (
     <ToolShell
       eyebrow="Toolbox — Text Diff"
-      title="Same words, different story."
+      title="Before and after."
       description="A line-based diff with zero dependencies — paste before and after, read the deltas."
     >
       <DiffTool />
