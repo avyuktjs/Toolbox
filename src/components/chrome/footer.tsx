@@ -9,6 +9,7 @@ const COLUMNS: { label: string; links: { href: string; text: string }[] }[] = [
       { href: "/downloader", text: "Media Downloader" },
       { href: "/convert", text: "Media Converter" },
       { href: "/history", text: "History" },
+      { href: "/sites", text: "Supported Sites" },
       { href: "/faq", text: "FAQ" },
     ],
   },
@@ -16,6 +17,7 @@ const COLUMNS: { label: string; links: { href: string; text: string }[] }[] = [
     label: "Tools",
     links: [
       { href: "/json", text: "JSON Formatter" },
+      { href: "/image", text: "Image Studio" },
       { href: "/base64", text: "Base64" },
       { href: "/case-converter", text: "Case Converter" },
       { href: "/word-counter", text: "Word Counter" },

@@ -10,6 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@base-ui/react": "^1.9.0",
     "@hookform/resolvers": "^7.0.6",
     "@radix-ui/react-dialog": "^1.3.1",
     "@radix-ui/react-slot": "^1.5.0",
@@ -45,7 +46,7 @@
   "engines": {
     "node": ">=20.9"
   },
-  "description": "A growing shelf of free, instant everyday web utilities \u2014 one tool per route, all on one tab. No accounts, no uploads.",
+  "description": "A growing shelf of free, instant everyday web utilities — one tool per route, all on one tab. No accounts, no uploads.",
   "license": "MIT",
   "author": "Avyukt Sehgal (https://vishy.dino.icu/)",
   "repository": {

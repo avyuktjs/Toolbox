@@ -8,6 +8,7 @@ import {
   Download,
   FileCog,
   Fingerprint,
+  Image as ImageIcon,
   QrCode,
   Type,
   Link2,
@@ -35,6 +36,12 @@ export const TOOLS: Tool[] = [
     name: "Media Converter",
     tagline: "A local FFmpeg bench: MP4, WebM, MP3, WAV, AAC — no watermarks.",
     icon: FileCog,
+  },
+  {
+    slug: "/image",
+    name: "Image Studio",
+    tagline: "PNG ↔ JPEG ↔ WebP — plus resize, crop and rotate. Local, always.",
+    icon: ImageIcon,
   },
   {
     slug: "/json",

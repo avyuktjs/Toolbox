@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { Link2, Loader2, ArrowRight, X, AlertCircle } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -134,7 +135,15 @@ export function UrlConsole({
 
         {/* footnote strip */}
         <div className="flex items-center justify-between gap-3 border-t border-line px-4 py-2.5 text-[12px] text-ink3">
-          <span className="truncate">Works with public videos from YouTube, Vimeo, SoundCloud and 1000+ sites</span>
+          <span className="flex min-w-0 flex-wrap items-center gap-x-1.5">
+            <span>Works with public videos from YouTube, Vimeo, SoundCloud and 1000+ sites</span>
+            <Link
+              href="/sites"
+              className="shrink-0 font-medium text-ink underline decoration-line2 underline-offset-2 transition-colors hover:text-accent-ink"
+            >
+              See all
+            </Link>
+          </span>
           <span className="hidden shrink-0 items-center gap-1.5 sm:flex">
             <kbd className="kbd">↵</kbd>
             <span className="text-[11px]">inspect</span>
