@@ -1,0 +1,34 @@
+/** Honest translation of yt-dlp failures — no euphemisms, no fake fixes. */
+export function mapExtractorError(stderr: string): string {
+  const tail = stderr
+    .split("\n")
+    .map((line) => line.replace(/^ERROR:\s*/i, "").trim())
+    .filter(Boolean);
+  const last = tail[tail.length - 1] ?? "";
+  const text = last.toLowerCase();
+
+  // YouTube's bot challenge is an IP reputation problem, not a private video.
+  // Check this before anything containing "sign in" so it isn't mislabelled.
+  if (
+    /sign in to confirm|not a bot|use --cookies|cookies-from-browser|vpn or a proxy|proxy server|too many requests|http error 429/.test(
+      text,
+    )
+  ) {
+    return "YouTube is blocking this server with a bot check — the video is public, but the server's IP isn't trusted. Toolbox doesn't use accounts, cookies, VPNs or proxies to get around it. Try the downloader from your own machine, or use a different public source.";
+  }
+
+  if (/private video|video is private|members-only|sign in to view this video/.test(text)) {
+    return "This video is private or members-only. Toolbox doesn't touch login-walled media.";
+  }
+  if (/unsupported url|unable to extract|no video formats/.test(text)) {
+    return "That page doesn't look like a supported media source.";
+  }
+  if (/not available|unavailable|removed|copyright|terminated/.test(text)) {
+    return "This video isn't available — it may have been removed or blocked by the source.";
+  }
+  if (/timed out|timeout|network|resolve|unreachable|econn/.test(text)) {
+    return "The source didn't respond in time. Check your connection and try again.";
+  }
+  const trimmed = last.length > 220 ? `${last.slice(0, 217)}…` : last;
+  return trimmed ? `Couldn't inspect that link: ${trimmed}` : "Couldn't inspect that link.";
+}

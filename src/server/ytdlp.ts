@@ -10,6 +10,7 @@ import path from "node:path";
 import { z } from "zod";
 import type { DownloadSelection, InspectedMedia, InspectedVideoVariant } from "@/types/media";
 import { sanitizeFilename } from "@/lib/format";
+import { mapExtractorError } from "@/lib/extractor-errors";
 import { JOBS_DIR, completeJob, failJob, updateJob, attachChild } from "./jobs";
 
 export const mediaUrlSchema = z
@@ -219,26 +220,6 @@ export async function inspectUrl(rawUrl: string): Promise<InspectResult> {
   };
   cacheSet(url, media);
   return { ok: true, media };
-}
-
-function mapExtractorError(stderr: string): string {
-  const tail = stderr.split("\n").map((l) => l.replace(/^ERROR:\s*/i, "").trim()).filter(Boolean);
-  const last = tail[tail.length - 1] ?? "";
-  const text = last.toLowerCase();
-  if (/sign in|login|private|members-only|cookies/.test(text)) {
-    return "This video is private or needs a sign-in. Toolbox doesn't touch login-walled or DRM-protected media.";
-  }
-  if (/unsupported url|unable to extract|no video formats/.test(text)) {
-    return "That page doesn't look like a supported media source.";
-  }
-  if (/not available|unavailable|removed|copyright|terminated/.test(text)) {
-    return "This video isn't available — it may have been removed or blocked by the source.";
-  }
-  if (/timed out|timeout|network|resolve|unreachable|econn/.test(text)) {
-    return "The source didn't respond in time. Check your connection and try again.";
-  }
-  const trimmed = last.length > 220 ? `${last.slice(0, 217)}…` : last;
-  return trimmed ? `Couldn't inspect that link: ${trimmed}` : "Couldn't inspect that link.";
 }
 
 /* ---------------- download jobs ---------------- */

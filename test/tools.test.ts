@@ -102,3 +102,24 @@ describe("cron", () => {
     expect(runs[1].getFullYear()).toBe(2032);
   });
 });
+
+import { mapExtractorError } from "../src/lib/extractor-errors";
+
+describe("extractor errors", () => {
+  it("names YouTube's bot challenge instead of calling the video private", () => {
+    const stderr =
+      "ERROR: [youtube] 2BvHtjR90IU: Sign in to confirm you’re not a bot. This helps protect our community.";
+    const message = mapExtractorError(stderr);
+    expect(message).toMatch(/bot check/);
+    expect(message).not.toMatch(/private/);
+  });
+  it("explains the proxy hint the same way", () => {
+    expect(mapExtractorError("ERROR: You might want to use a VPN or a proxy server (with --proxy) to workaround.")).toMatch(/bot check/);
+  });
+  it("still reports genuinely private videos", () => {
+    expect(mapExtractorError("ERROR: [youtube] abc: Private video. Sign in if you've been granted access")).toMatch(/private or members-only/);
+  });
+  it("keeps short raw errors for unknown cases", () => {
+    expect(mapExtractorError("ERROR: [youtube] abc: Something odd")).toBe("Couldn't inspect that link: [youtube] abc: Something odd");
+  });
+});
