@@ -14,7 +14,7 @@ export function mapExtractorError(stderr: string): string {
       text,
     )
   ) {
-    return "YouTube is blocking this server with a bot check — the video is public, but the server's IP isn't trusted. Toolbox doesn't use accounts, cookies, VPNs or proxies to get around it. Try the downloader from your own machine, or use a different public source.";
+    return "YouTube blocked this server with a bot check — the video is public, but the server's IP isn't trusted. Toolbox never asks visitors for credentials; the host operator can configure a proxy or cookies, or you can try the downloader from your own machine or another public source.";
   }
 
   if (/private video|video is private|members-only|sign in to view this video/.test(text)) {
