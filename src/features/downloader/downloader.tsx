@@ -10,7 +10,8 @@ import { useHistoryStore } from "@/features/history/history-store";
 import { toast } from "sonner";
 import type { DownloadSelection, InspectedMedia } from "@/types/media";
 
-const EXAMPLE_URL = "https://www.youtube.com/watch?v=aqz-KE-bpKQ";
+const EXAMPLE_URL =
+  "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4";
 
 type Phase = "idle" | "inspecting" | "ready";
 
