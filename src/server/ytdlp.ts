@@ -51,6 +51,20 @@ export function isPrivateHost(u: string): boolean {
 
 const YTDLP = "yt-dlp";
 
+/**
+ * Operator-only network config. Never exposed through the UI.
+ * YTDLP_PROXY is a proxy URL; YTDLP_COOKIES is a path to a cookies.txt file.
+ * Both are opt-in and only read at process start, not per request.
+ */
+function networkArgs(): string[] {
+  const args: string[] = [];
+  const proxy = process.env.YTDLP_PROXY?.trim();
+  if (proxy) args.push("--proxy", proxy);
+  const cookies = process.env.YTDLP_COOKIES?.trim();
+  if (cookies && fs.existsSync(cookies)) args.push("--cookies", cookies);
+  return args;
+}
+
 function runCapture(args: string[], timeoutMs: number): Promise<{ stdout: string; stderr: string; code: number | null }> {
   return new Promise((resolve, reject) => {
     const child = spawn(YTDLP, args, { stdio: ["ignore", "pipe", "pipe"] });
@@ -139,7 +153,7 @@ export async function inspectUrl(rawUrl: string): Promise<InspectResult> {
   let res: { stdout: string; stderr: string; code: number | null };
   try {
     res = await runCapture(
-      ["--dump-single-json", "--no-playlist", "--skip-download", "--no-warnings", "--socket-timeout", "12", "--retries", "2", url],
+      ["--dump-single-json", "--no-playlist", "--skip-download", "--no-warnings", "--socket-timeout", "12", "--retries", "2", ...networkArgs(), url],
       50_000,
     );
   } catch (err) {
@@ -237,6 +251,7 @@ export function startDownload(jobId: string, url: string, title: string | null, 
     "--socket-timeout", "15",
     "--retries", "3",
     "-o", template,
+    ...networkArgs(),
   ];
 
   let expectedExt: string;

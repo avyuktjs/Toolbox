@@ -131,7 +131,7 @@ NEXT_BUILD_WORKERS=2 npm run build
 
 - **Local by default:** image work, PDFs, text, CSS generators and every generator on the bench run in the browser. Nothing is uploaded; the files never leave the tab.
 - **The two server tools:** yt-dlp and FFmpeg only. Streams come from the source, sizes are reported only when the source says them, no DRM bypassing of any kind.
-- **Bot checks:** YouTube sometimes challenges data-centre IPs. Toolbox never supplies accounts, cookies or VPN tricks; if you own the host and have a legitimate proxy, set `HTTPS_PROXY` for the server process and yt-dlp will use it. The error message says plainly when this is happening.
+- **Bot checks:** YouTube sometimes challenges data-centre IPs. Toolbox never asks visitors for accounts or cookies, and the UI has no proxy or cookie fields. Operators can opt in with env vars: `YTDLP_PROXY` (proxy URL) or `YTDLP_COOKIES` (path to a `cookies.txt` on the server, mode 600 — these are live session credentials, so use a throwaway account and never commit the file). The error message says plainly when a bot check is happening.
 - **Privacy:** those two upload paths live in `.toolbox-tmp/` under the project root and are swept after 15 minutes. History is `localStorage` on your device; the server never knows what you did.
 - **No AI:** no upscaling, no "enhance", no generated filler. Every tool does a deterministic job you can verify.
 - **Limits:** 300 MB per media upload, rate-limited per IP (20/min inspect, 10/min convert/download), single-node deploys.
