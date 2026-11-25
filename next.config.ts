@@ -8,7 +8,13 @@ const securityHeaders = [
   { key: "X-DNS-Prefetch-Control", value: "on" },
 ];
 
+const buildWorkers = Number(process.env.NEXT_BUILD_WORKERS);
+
 const nextConfig: NextConfig = {
+  // small hosts can cap build workers with NEXT_BUILD_WORKERS=2
+  ...(Number.isInteger(buildWorkers) && buildWorkers > 0
+    ? { experimental: { cpus: buildWorkers } }
+    : {}),
   poweredByHeader: false,
   compress: true,
   turbopack: {
