@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // generated at predev/prebuild — vendored browser worker, not source:
+    "public/pdfjs-worker.min.mjs",
   ]),
 ]);
 

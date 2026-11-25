@@ -43,3 +43,6 @@ next-env.d.ts
 
 # agent harness files
 /AGENTS.md
+
+# pdfjs worker copied at predev/prebuild
+public/pdfjs-worker.min.mjs
