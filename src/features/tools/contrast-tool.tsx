@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check, X } from "lucide-react";
 import { AiCopyButton } from "@/components/ai-copy-button";
 import { cn } from "@/lib/utils";
+import { ColorWell } from "@/components/ui/color-picker";
 
 type Rgb = [number, number, number];
 
@@ -61,12 +62,11 @@ export function ContrastTool() {
           { label: "Background", value: bg, set: setBg, rgb: bgRgb },
         ] as const).map(({ label, value: v, set, rgb }) => (
           <div key={label} className="flex items-center gap-3 border-b border-line p-4 max-sm:last:border-b-0 sm:border-r sm:last:border-r-0">
-            <input
-              type="color"
-              value={rgb ? hexOf(rgb).toLowerCase() : "#000000"}
-              onChange={(e) => set(e.target.value)}
+            <ColorWell
               aria-label={`${label} color`}
-              className="size-12 shrink-0 cursor-pointer rounded-[10px] border border-line bg-transparent p-0.5"
+              value={rgb ? hexOf(rgb).toLowerCase() : "#000000"}
+              onChange={(color) => set(color.toString("hex"))}
+              wellClassName="size-12 shrink-0"
             />
             <div className="min-w-0 flex-1">
               <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.2em] text-ink3">

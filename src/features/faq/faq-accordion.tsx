@@ -13,7 +13,7 @@ const QA: { slug: string; q: string; a: React.ReactNode }[] = [
   {
     slug: "what",
     q: "What is Toolbox?",
-    a: "A growing set of free, instant web utilities — a media downloader, an FFmpeg converter, a JSON formatter and more. Fifteen tools and counting, all on one tab, all free.",
+    a: "A growing set of free, instant web utilities — a media downloader, an FFmpeg converter, a JSON formatter and more. Thirty-eight tools and counting, all on one tab, all free.",
   },
   {
     slug: "where",

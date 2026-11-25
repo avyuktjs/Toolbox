@@ -4,6 +4,7 @@ import QRCode from "qrcode";
 import { useEffect, useRef, useState } from "react";
 import { Download, QrCode, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { ColorWell } from "@/components/ui/color-picker";
 
 export function QrTool() {
   const [input, setInput] = useState("https://example.com");
@@ -88,12 +89,11 @@ export function QrTool() {
               { label: "Background", value: light, set: setLight },
             ].map(({ label, value, set }) => (
               <label key={label} className="flex items-center gap-2 rounded-[10px] border border-line px-3 py-2">
-                <input
-                  type="color"
-                  value={value}
-                  onChange={(e) => set(e.target.value)}
+                <ColorWell
                   aria-label={label}
-                  className="size-7 cursor-pointer rounded-md border border-line p-0.5"
+                  value={value}
+                  onChange={(color) => set(color.toString("hex"))}
+                  wellClassName="size-7"
                 />
                 <span className="min-w-0">
                   <span className="block font-mono text-[8px] font-semibold uppercase tracking-[0.18em] text-ink3">

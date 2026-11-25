@@ -12,7 +12,11 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Slider } from "@/components/ui/slider";
+import { ColorWell } from "@/components/ui/color-picker";
 import { formatBytes, sanitizeFilename } from "@/lib/format";
+import { blobFromCanvas, downloadBlob } from "@/lib/download";
+import { encodeBmp, encodeIco } from "@/lib/ico";
 
 /* ── what the pipeline can do ── */
 
@@ -142,107 +146,6 @@ function renderToCanvas(item: LoadedImage, s: RenderSettings): HTMLCanvasElement
   fctx.scale(s.flipH ? -1 : 1, s.flipV ? -1 : 1);
   fctx.drawImage(a, -outW / 2, -outH / 2, outW, outH);
   return final;
-}
-
-/** toBlob guarded by a type check — some browsers quietly hand back a PNG or null. */
-function blobFromCanvas(canvas: HTMLCanvasElement, mime: string, quality?: number): Promise<Blob | null> {
-  return new Promise((resolve) => {
-    canvas.toBlob((blob) => resolve(blob && blob.type === mime ? blob : null), mime, quality);
-  });
-}
-
-/** Hand-rolled 24-bit BMP — canvas can't encode one itself. */
-async function encodeBmp(canvas: HTMLCanvasElement): Promise<Blob> {
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("no 2d context");
-  const { width: w, height: h } = canvas;
-  const data = ctx.getImageData(0, 0, w, h).data;
-  const stride = (w * 3 + 3) & ~3;
-  const pixelBytes = stride * h;
-  const fileSize = 54 + pixelBytes;
-  const buf = new ArrayBuffer(fileSize);
-  const view = new DataView(buf);
-  const u8 = new Uint8Array(buf);
-
-  u8[0] = 0x42; u8[1] = 0x4d; // "BM"
-  view.setUint32(2, fileSize, true);
-  view.setUint32(10, 54, true);
-  view.setUint32(14, 40, true); // BITMAPINFOHEADER
-  view.setInt32(18, w, true);
-  view.setInt32(22, h, true); // positive = bottom-up rows
-  view.setUint16(26, 1, true);
-  view.setUint16(28, 24, true); // 24 bpp
-  view.setUint32(30, 0, true); // BI_RGB
-  view.setUint32(34, pixelBytes, true);
-  view.setInt32(38, 2835, true); // ~72 dpi
-  view.setInt32(42, 2835, true);
-  view.setUint32(46, 0, true);
-  view.setUint32(50, 0, true);
-
-  let offset = 54;
-  for (let y = h - 1; y >= 0; y -= 1) {
-    const row = y * w;
-    for (let x = 0; x < w; x += 1) {
-      const i = (row + x) * 4;
-      u8[offset] = data[i + 2]; // B
-      u8[offset + 1] = data[i + 1]; // G
-      u8[offset + 2] = data[i]; // R
-      offset += 3;
-    }
-    offset += stride - w * 3;
-  }
-  return new Blob([buf], { type: "image/bmp" });
-}
-
-/** Hand-rolled ICO wrapping PNG frames at 16/32/48/256 — canvas can't encode ICO. */
-async function encodeIco(source: HTMLCanvasElement): Promise<Blob> {
-  const sizes = [16, 32, 48, 256];
-  const frames: Uint8Array[] = [];
-  for (const size of sizes) {
-    const frame = document.createElement("canvas");
-    frame.width = size;
-    frame.height = size;
-    const ctx = frame.getContext("2d");
-    if (!ctx) throw new Error("no 2d context");
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-    // center-crop the source to a square, then scale to each frame size
-    const side = Math.min(source.width, source.height);
-    const sx = (source.width - side) / 2;
-    const sy = (source.height - side) / 2;
-    ctx.drawImage(source, sx, sy, side, side, 0, 0, size, size);
-    const png = await blobFromCanvas(frame, "image/png");
-    if (!png) throw new Error("couldn't encode an ICO frame");
-    frames.push(new Uint8Array(await png.arrayBuffer()));
-  }
-
-  const count = frames.length;
-  const headerSize = 6 + 16 * count;
-  const total = headerSize + frames.reduce((sum, f) => sum + f.length, 0);
-  const buf = new ArrayBuffer(total);
-  const view = new DataView(buf);
-  const u8 = new Uint8Array(buf);
-
-  view.setUint16(0, 0, true); // reserved
-  view.setUint16(2, 1, true); // type: icon
-  view.setUint16(4, count, true);
-
-  let offset = headerSize;
-  frames.forEach((png, i) => {
-    const size = sizes[i];
-    const entry = 6 + 16 * i;
-    u8[entry] = size === 256 ? 0 : size; // 0 means 256
-    u8[entry + 1] = size === 256 ? 0 : size;
-    u8[entry + 2] = 0; // no palette
-    u8[entry + 3] = 0; // reserved
-    view.setUint16(entry + 4, 1, true); // color planes
-    view.setUint16(entry + 6, 32, true); // bits per pixel
-    view.setUint32(entry + 8, png.length, true);
-    view.setUint32(entry + 12, offset, true);
-    u8.set(png, offset);
-    offset += png.length;
-  });
-  return new Blob([buf], { type: "image/x-icon" });
 }
 
 /** The one encode path — estimate, download and batch all go through here. */
@@ -446,11 +349,7 @@ export function ImageTool() {
         return;
       }
       const ext = { png: "png", jpeg: "jpg", webp: "webp", avif: "avif", bmp: "bmp", ico: "ico" }[format];
-      const link = document.createElement("a");
-      link.download = `${baseName(item.name)}.${ext}`;
-      link.href = URL.createObjectURL(blob);
-      link.click();
-      window.setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+      downloadBlob(blob, `${baseName(item.name)}.${ext}`);
     },
     // settings is rebuilt every render; effectiveWidth pins the useful part
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -806,17 +705,18 @@ export function ImageTool() {
               {/* quality — lossy formats only */}
               {lossy && (
                 <div className="flex flex-wrap items-center gap-3">
-                  <label htmlFor="image-quality" className="w-20 font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-ink3">
+                  <span className="w-20 font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-ink3">
                     Quality
-                  </label>
-                  <input
-                    id="image-quality"
-                    type="range"
-                    min={40}
-                    max={100}
+                  </span>
+                  <Slider
+                    minValue={40}
+                    maxValue={100}
                     value={quality}
-                    onChange={(e) => setQuality(Number(e.target.value))}
-                    className="h-1.5 w-40 cursor-pointer appearance-none rounded-full bg-sunken accent-brand"
+                    onChange={setQuality}
+                    thumbLabel="Quality"
+                    aria-label="Quality"
+                    showTooltip={false}
+                    className="w-40"
                   />
                   <span className="w-8 font-mono text-[12px] text-ink">{quality}</span>
                 </div>
@@ -825,16 +725,14 @@ export function ImageTool() {
               {/* opaque backdrop — jpeg only */}
               {showBackground && (
                 <div className="flex flex-wrap items-center gap-3">
-                  <label htmlFor="image-background" className="w-20 font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-ink3">
+                  <span className="w-20 font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-ink3">
                     Backdrop
-                  </label>
-                  <input
-                    id="image-background"
-                    type="color"
-                    value={background}
-                    onChange={(e) => setBackground(e.target.value)}
+                  </span>
+                  <ColorWell
                     aria-label="Background for transparent areas"
-                    className="size-8 cursor-pointer rounded-[8px] border border-line bg-transparent p-0.5"
+                    value={background}
+                    onChange={(color) => setBackground(color.toString("hex"))}
+                    wellClassName="size-8"
                   />
                   <span className="font-mono text-[11px] uppercase text-ink2">{background}</span>
                   <span className="text-[10px] text-ink3">JPEG can&apos;t hold transparency — this fills it.</span>
