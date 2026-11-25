@@ -54,7 +54,7 @@ export function Dossier({
               alt={`Thumbnail for “${media.title}”`}
               referrerPolicy="no-referrer"
               loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover max-lg:static max-lg:aspect-video"
+              className="absolute inset-0 h-full w-full object-contain max-lg:static max-lg:aspect-video"
             />
           ) : (
             <div className="grid aspect-video place-items-center lg:absolute lg:inset-0 lg:aspect-auto">
@@ -125,11 +125,12 @@ export function Dossier({
               </p>
               <Button
                 variant="primary"
-                size="lg"
+                size="medium"
+                leadingIcon={Download}
                 onClick={onDownload}
                 className="shrink-0 px-6"
               >
-                <Download /> Download
+                Download
               </Button>
             </div>
           )}

@@ -120,13 +120,13 @@ export function UrlConsole({
             >
               {busy ? (
                 <>
-                  <Loader2 className="animate-spin" />
+                  <Loader2 className="size-5 animate-spin" />
                   <span className="hidden min-[480px]:inline">Inspecting</span>
                 </>
               ) : (
                 <>
                   <span className="hidden min-[480px]:inline">Inspect</span>
-                  <ArrowRight />
+                  <ArrowRight className="size-5" />
                 </>
               )}
             </Button>

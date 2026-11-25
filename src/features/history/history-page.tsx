@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useMounted } from "@/features/shared/use-mounted";
 import {
@@ -17,7 +16,7 @@ import {
   CircleAlert,
   Loader2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { Tooltip } from "@/components/ui/tooltip";
 import { Seek } from "@/components/motion/seek";
 import { AiCopyButton } from "@/components/ai-copy-button";
@@ -96,7 +95,8 @@ export function HistoryPage() {
           {entries.length > 0 && (
           <Button
             variant="ghost"
-            size="sm"
+            size="small"
+            leadingIcon={confirmClear ? CircleAlert : Trash2}
             onClick={() => {
               if (!confirmClear) {
                 setConfirmClear(true);
@@ -108,7 +108,6 @@ export function HistoryPage() {
             }}
             className={cn(confirmClear && "border border-danger/50 bg-danger-soft text-danger hover:text-danger")}
           >
-            {confirmClear ? <CircleAlert /> : <Trash2 />}
             {confirmClear ? "Really clear everything?" : "Clear all"}
           </Button>
         )}
@@ -148,11 +147,9 @@ export function HistoryPage() {
               <p className="mt-1 text-[13px] leading-relaxed text-ink2">
                 Finished downloads and conversions will show up here, with their formats and sizes.
               </p>
-              <Button asChild variant="primary" className="mt-5">
-                <Link href="/">
-                  <Link2 /> Fetch something <ArrowRight />
-                </Link>
-              </Button>
+              <ButtonLink href="/" variant="primary" leadingIcon={Link2} trailingIcon={ArrowRight} className="mt-5">
+                Fetch something
+              </ButtonLink>
             </div>
           )}
         </div>
@@ -192,11 +189,9 @@ export function HistoryPage() {
                     </span>
                   )}
                   {status === "available" && (
-                    <Button asChild size="sm" variant="outline" className="h-8 text-[11px]">
-                      <a href={entry.downloadPath} download>
-                        <Download className="size-3.5" /> Save
-                      </a>
-                    </Button>
+                    <ButtonLink size="small" variant="secondary" href={entry.downloadPath} download leadingIcon={Download} className="h-8 text-[11px]">
+                      Save
+                    </ButtonLink>
                   )}
                   {status === "expired" && (
                     <Tooltip content="Purged after 15 minutes — go fetch it again">

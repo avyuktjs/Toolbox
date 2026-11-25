@@ -13,7 +13,7 @@ import {
   Scissors,
 } from "lucide-react";
 import { Segmented } from "@/components/ui/segmented";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatBytes, formatDuration } from "@/lib/format";
 import { useJobPolling } from "@/features/shared/use-job";
@@ -139,10 +139,8 @@ export function QueueItemCard({
               <AlertCircle className="mt-0.5 size-3.5 shrink-0" /> {item.error ?? "Conversion failed."}
             </p>
             <div className="mt-2 flex gap-2">
-              <Button size="sm" variant="outline" onClick={onConvert}>
-                Try again
-              </Button>
-              <Button size="sm" variant="ghost" onClick={onRemove}>
+              <Button size="small" variant="secondary" onClick={onConvert}>Try again</Button>
+              <Button size="small" variant="ghost" onClick={onRemove}>
                 Remove
               </Button>
             </div>
@@ -154,11 +152,7 @@ export function QueueItemCard({
               <p className="mt-0.5 truncate font-mono text-[11px] text-ink">{item.outputName ?? "output"}</p>
             </div>
             {item.jobId ? (
-              <Button asChild size="sm" variant="primary">
-                <a href={`/api/jobs/${item.jobId}/file`} download>
-                  <Save /> Save
-                </a>
-              </Button>
+              <ButtonLink size="small" variant="primary" href={`/api/jobs/${item.jobId}/file`} download leadingIcon={Save}>Save</ButtonLink>
             ) : null}
           </div>
         ) : running && job ? (
@@ -186,7 +180,7 @@ export function QueueItemCard({
             </div>
             <div className="mt-2 flex items-center justify-between gap-2">
               <span className="font-mono text-[9px] text-ink3 t-tabular">{job.speed ?? ""}</span>
-              <Button size="sm" variant="ghost" onClick={() => cancel()} className="h-7 text-[11px] text-danger hover:bg-danger-soft hover:text-danger">
+              <Button size="small" variant="ghost" onClick={() => cancel()} className="h-7 text-[11px] text-danger hover:bg-danger-soft hover:text-danger">
                 Cancel
               </Button>
             </div>
@@ -283,7 +277,7 @@ export function QueueItemCard({
               <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-ink3">
                 {itemDetail(item)}
               </span>
-              <Button size="sm" variant="primary" onClick={onConvert}>
+              <Button size="small" variant="primary" onClick={onConvert}>
                 Convert
               </Button>
             </div>

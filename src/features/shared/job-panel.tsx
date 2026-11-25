@@ -10,7 +10,7 @@ import {
   Gauge,
   Timer,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatBytes } from "@/lib/format";
 import type { JobSnapshot } from "@/types/media";
@@ -49,15 +49,9 @@ export function JobPanel({
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           {job.downloadUrl ? (
-            <Button asChild variant="primary">
-              <a href={job.downloadUrl} download>
-                <Download /> Save file
-              </a>
-            </Button>
+            <ButtonLink variant="primary" href={job.downloadUrl} download leadingIcon={Download}>Save file</ButtonLink>
           ) : null}
-          <Button variant="outline" onClick={onReset}>
-            <RotateCcw /> Start another
-          </Button>
+          <Button variant="secondary" onClick={onReset} leadingIcon={RotateCcw}>Start another</Button>
         </div>
       </div>
     );
@@ -77,9 +71,7 @@ export function JobPanel({
           </div>
         </div>
         <div className="mt-4 flex flex-wrap items-center gap-2">
-          <Button variant="outline" onClick={onRetry}>
-            <RotateCcw /> Try again
-          </Button>
+          <Button variant="secondary" onClick={onRetry} leadingIcon={RotateCcw}>Try again</Button>
           <Button variant="ghost" onClick={onReset}>
             Start over
           </Button>
@@ -139,7 +131,7 @@ export function JobPanel({
         <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-ink3">
           Keep this tab open to save the file when it lands
         </p>
-        <Button variant="ghost" size="sm" onClick={onCancel} className="text-danger hover:bg-danger-soft hover:text-danger">
+        <Button variant="ghost" size="small" onClick={onCancel} className="text-danger hover:bg-danger-soft hover:text-danger">
           <Trash2 /> Cancel
         </Button>
       </div>

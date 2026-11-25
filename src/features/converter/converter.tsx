@@ -162,8 +162,9 @@ export function Converter() {
               )}
               {readyCount > 1 && (
                 <Button
-                  size="sm"
-                  variant="ink"
+                  size="small"
+                  variant="secondary"
+                  leadingIcon={Wand2}
                   onClick={() => {
                     const ready = items.filter((it) => it.stage === "ready");
                     ready.slice(0, 3).forEach((it) => void startConvert(it.id));
@@ -174,7 +175,7 @@ export function Converter() {
                     }
                   }}
                 >
-                  <Wand2 /> Convert all ({readyCount})
+                  Convert all ({readyCount})
                 </Button>
               )}
             </div>
