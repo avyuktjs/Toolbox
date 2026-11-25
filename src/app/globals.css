@@ -284,3 +284,23 @@ button:disabled,
   .animate-accordion-down,
   .animate-accordion-up { animation: none; }
 }
+
+/* markdown preview — compact, printed-page prose */
+.markdown-preview h1 { font-size: 1.6em; font-weight: 700; letter-spacing: -0.02em; margin: 0.6em 0 0.4em; line-height: 1.15; }
+.markdown-preview h2 { font-size: 1.3em; font-weight: 700; letter-spacing: -0.01em; margin: 0.7em 0 0.35em; border-bottom: 1px solid var(--line, #e7e5df); padding-bottom: 0.2em; }
+.markdown-preview h3 { font-size: 1.1em; font-weight: 650; margin: 0.8em 0 0.3em; }
+.markdown-preview h4, .markdown-preview h5, .markdown-preview h6 { font-size: 1em; font-weight: 650; margin: 0.8em 0 0.3em; }
+.markdown-preview p, .markdown-preview ul, .markdown-preview ol, .markdown-preview blockquote, .markdown-preview table { margin: 0.55em 0; }
+.markdown-preview ul { list-style: disc; padding-left: 1.4em; }
+.markdown-preview ol { list-style: decimal; padding-left: 1.4em; }
+.markdown-preview li { margin: 0.15em 0; }
+.markdown-preview code { background: color-mix(in srgb, currentColor 8%, transparent); border-radius: 5px; padding: 0.1em 0.35em; font-size: 0.88em; font-family: ui-monospace, monospace; }
+.markdown-preview pre { background: color-mix(in srgb, currentColor 7%, transparent); border-radius: 10px; padding: 0.75em 0.9em; overflow-x: auto; margin: 0.6em 0; }
+.markdown-preview pre code { background: transparent; padding: 0; font-size: 0.85em; }
+.markdown-preview blockquote { border-left: 3px solid color-mix(in srgb, currentColor 25%, transparent); padding-left: 0.9em; opacity: 0.85; }
+.markdown-preview table { border-collapse: collapse; font-size: 0.9em; }
+.markdown-preview th, .markdown-preview td { border: 1px solid color-mix(in srgb, currentColor 18%, transparent); padding: 0.35em 0.7em; }
+.markdown-preview th { background: color-mix(in srgb, currentColor 6%, transparent); text-align: left; }
+.markdown-preview a { color: var(--accent-ink, #1d43f2); text-decoration: underline; text-underline-offset: 3px; }
+.markdown-preview img { max-width: 100%; border-radius: 8px; }
+.markdown-preview hr { border: none; border-top: 1px solid color-mix(in srgb, currentColor 18%, transparent); margin: 1.2em 0; }

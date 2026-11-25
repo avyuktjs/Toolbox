@@ -10,30 +10,68 @@ const COLUMNS: { label: string; links: { href: string; text: string }[] }[] = [
       { href: "/convert", text: "Media Converter" },
       { href: "/history", text: "History" },
       { href: "/sites", text: "Supported Sites" },
+      { href: "/mediatools", text: "MediaTools shelf" },
+      { href: "/devtools", text: "DevTools shelf" },
+      { href: "/imagetools", text: "ImageTools shelf" },
+      { href: "/designtools", text: "DesignTools shelf" },
+      { href: "/texttools", text: "TextTools shelf" },
       { href: "/faq", text: "FAQ" },
     ],
   },
   {
     label: "Tools",
     links: [
-      { href: "/json", text: "JSON Formatter" },
       { href: "/image", text: "Image Studio" },
+      { href: "/crop", text: "Visual Crop" },
+      { href: "/compress", text: "Image Compressor" },
+      { href: "/redact", text: "Redact" },
+      { href: "/exif", text: "EXIF Viewer" },
+      { href: "/watermark", text: "Batch Watermark" },
+      { href: "/favicon", text: "Favicon Pack" },
+      { href: "/images-to-pdf", text: "Images → PDF" },
+      { href: "/pdf", text: "PDF Toolbox" },
+    ],
+  },
+  {
+    label: "Dev tools",
+    links: [
+      { href: "/regex", text: "Regex Tester" },
+      { href: "/data-convert", text: "Data Converter" },
+      { href: "/json", text: "JSON Formatter" },
+      { href: "/jwt", text: "JWT Decoder" },
+      { href: "/cron", text: "Cron Explainer" },
+      { href: "/lines", text: "Line Tools" },
+      { href: "/slugify", text: "Slugify" },
+      { href: "/password", text: "Password Generator" },
+      { href: "/chmod", text: "chmod Calculator" },
+    ],
+  },
+  {
+    label: "Design & text",
+    links: [
+      { href: "/gradient", text: "Gradient Studio" },
+      { href: "/shadow", text: "Box Shadow Studio" },
+      { href: "/shades", text: "Shade Scale" },
+      { href: "/palette", text: "Palette Extractor" },
+      { href: "/ascii", text: "ASCII Art" },
+      { href: "/placeholder", text: "Placeholder Images" },
       { href: "/base64", text: "Base64" },
       { href: "/case-converter", text: "Case Converter" },
       { href: "/word-counter", text: "Word Counter" },
-      { href: "/uuid", text: "UUID Generator" },
-      { href: "/contrast", text: "Contrast Checker" },
     ],
   },
   {
     label: "More tools",
     links: [
+      { href: "/uuid", text: "UUID Generator" },
+      { href: "/contrast", text: "Contrast Checker" },
       { href: "/qr", text: "QR Code Generator" },
       { href: "/url", text: "URL Encoder" },
       { href: "/hash", text: "Hash Generator" },
       { href: "/timestamp", text: "Unix Timestamp" },
       { href: "/diff", text: "Text Diff" },
       { href: "/lorem", text: "Lorem Ipsum" },
+      { href: "/markdown", text: "Markdown Preview" },
     ],
   },
 ];
@@ -63,7 +101,7 @@ export function Footer() {
           </div>
 
           {/* link columns */}
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-8 lg:gap-6">
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-8 lg:grid-cols-5 lg:gap-6">
             {COLUMNS.map((col) => (
               <nav key={col.label} aria-label={col.label}>
                 <p className="font-mono text-[9px] font-semibold uppercase tracking-[0.24em] text-ink3">

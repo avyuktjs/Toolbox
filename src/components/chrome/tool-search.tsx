@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { Search, SearchX, ArrowUpRight } from "lucide-react";
 import { TOOLS } from "@/features/tools/registry";
+import { BUNDLES } from "@/features/tools/bundles";
 import {
   Dialog,
   DialogContent,
@@ -32,13 +33,28 @@ export function ToolSearch() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
+  const bundleEntries = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return BUNDLES.filter((b) =>
+      !q ||
+      `${b.name} ${b.manifesto} bundle shelf`.toLowerCase().includes(q),
+    ).map((b) => ({
+      slug: b.slug,
+      name: `${b.name} bundle`,
+      tagline: b.manifesto,
+      icon: b.icon,
+    }));
+  }, [query]);
+
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return TOOLS;
-    return TOOLS.filter((tool) =>
-      `${tool.name} ${tool.tagline} ${tool.slug}`.toLowerCase().includes(q),
-    );
-  }, [query]);
+    const tools = q
+      ? TOOLS.filter((tool) =>
+          `${tool.name} ${tool.tagline} ${tool.slug}`.toLowerCase().includes(q),
+        )
+      : TOOLS;
+    return [...bundleEntries, ...tools];
+  }, [query, bundleEntries]);
 
   const openResults = () => {
     const first = results[0];
@@ -88,7 +104,7 @@ export function ToolSearch() {
                   openResults();
                 }
               }}
-              placeholder={`Search ${TOOLS.length} tools…`}
+              placeholder={`Search ${TOOLS.length} tools and ${BUNDLES.length} shelves…`}
               aria-label="Search tools"
               className="tool-search-input h-full min-w-0 flex-1 bg-transparent text-[15px] text-ink caret-brand outline-none placeholder:text-ink3 [&::-webkit-search-cancel-button]:hidden"
             />
@@ -137,7 +153,7 @@ export function ToolSearch() {
           </div>
 
           <div className="flex items-center justify-between border-t border-line px-4 py-2 font-mono text-[9px] uppercase tracking-[0.18em] text-ink3">
-            <span>{results.length} tools</span>
+            <span>{results.length} result{results.length === 1 ? "" : "s"}</span>
             <span>↵ open · esc close</span>
           </div>
         </DialogContent>

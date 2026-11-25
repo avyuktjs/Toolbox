@@ -35,7 +35,35 @@ The shelf keeps growing — one utility per route, all free:
 | `/timestamp` | Epoch ↔ date, both directions, live clock |
 | `/diff` | Line diff with no dependencies |
 | `/lorem` | Deterministic placeholder text |
+| `/mediatools` | MediaTools shelf — the flagship downloader and FFmpeg bench, gathered |
+| `/devtools` | DevTools shelf — JSON, regex, JWT, cron, hashes and more, filterable |
+| `/imagetools` | ImageTools shelf — crop, compress, redact, PDFs, filterable |
+| `/designtools` | DesignTools shelf — gradients, shadows, shade ladders, contrast |
+| `/texttools` | TextTools shelf — markdown preview, word counter, case conversion |
 | `/image` | PNG ↔ JPEG ↔ WebP — resize, crop and rotate, local always |
+| `/crop` | Visual crop — drag the rect, thirds grid, ratio presets incl. passport 35×45 |
+| `/redact` | Pixelate, blur or blackout sensitive bits before you post — burned in before export |
+| `/compress` | Name a target KB — quality and dimensions get binary-searched until it fits |
+| `/exif` | Camera, exposure and GPS metadata — inspect, then strip with one click |
+| `/palette` | The 8 dominant colors from any image — median-cut, click to copy |
+| `/ascii` | Any image → text characters or a downloadable PNG |
+| `/watermark` | Batch text/logo stamps across sets — download as zip |
+| `/favicon` | One logo → .ico, every PNG size, webmanifest and head snippet — zipped |
+| `/images-to-pdf` | Reorder images, pick a page size — one clean PDF out |
+| `/pdf` | Merge, reorder, split, extract page ranges — or rasterize pages to PNG |
+| `/regex` | Pattern, flags, live highlights and capture groups — with replace preview |
+| `/data-convert` | JSON ↔ YAML ↔ TOML ↔ CSV — round-trip safe |
+| `/markdown` | GFM preview, side by side — sanitized, copy the HTML |
+| `/jwt` | Header, payload and expiry verdict — decoded locally, never verified |
+| `/cron` | `*/15 9-17 * * *` in plain English — plus the next five real run times |
+| `/lines` | Sort, dedupe, reverse, shuffle, trim, number any pasted list |
+| `/slugify` | Any title → clean URL slug — batch mode included |
+| `/password` | Rejection-sampled randomness, honest entropy math, bulk rolls |
+| `/chmod` | Toggle rwx bits — octal and symbolic, both directions |
+| `/gradient` | Linear, radial and conic — layered stops, pure CSS out |
+| `/shadow` | Layered physical shadows, insets and all — copy real CSS |
+| `/shades` | One hex → full 50–950 ladder — CSS vars, Tailwind @theme or JSON |
+| `/placeholder` | Canvas-rendered placeholders at any size — blueprint grid included |
 | `/sites` | The full index of yt-dlp-supported source sites |
 
 ## Stack
