@@ -136,7 +136,7 @@ NEXT_BUILD_WORKERS=2 npm run build
 - **No AI:** no upscaling, no "enhance", no generated filler. Every tool does a deterministic job you can verify.
 - **Limits:** 300 MB per media upload, rate-limited per IP (20/min inspect, 10/min convert/download), single-node deploys.
 - **VPS notes:** keep `yt-dlp` current (`yt-dlp -U`, or `pipx upgrade yt-dlp`) and install [Deno](https://deno.com/) — yt-dlp uses it to solve YouTube's JS challenges. If YouTube still refuses a public video, the VPS IP is flagged; use `YTDLP_COOKIES` or `YTDLP_PROXY`. A recent yt-dlp plus a JS runtime fixes most “unavailable” errors that only happen on the server.
-- **Deploy notes:** the production build uses `prebuild` to copy the pdfjs worker into `public/`. Here it runs under pm2 behind a Cloudflare tunnel.
+- **Deploy notes:** the production build uses `prebuild` to copy the pdfjs worker into `public/`. Here it runs under pm2 behind a Cloudflare tunnel. When uploading prebuilt `.next` artifacts to a host, delete its existing `.next` first — Next will otherwise keep serving cached HTML from the previous build.
 - **Search Console:** add `https://toolbox.vishaljadhav.me` as a domain property in Google Search Console, verify with the HTML file Google gives you (drop it in `public/`, or set `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` to the meta-tag token), then submit `https://toolbox.vishaljadhav.me/sitemap.xml`. `robots.txt` is generated at `/robots.txt`; canonicals, Open Graph and JSON-LD come from the root layout. Override the absolute origin with `NEXT_PUBLIC_SITE_URL` for other domains.
 
 ## Contributing
