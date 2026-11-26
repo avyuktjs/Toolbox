@@ -34,6 +34,11 @@ export function Dossier({
   const finished = job?.state === "complete" || job?.state === "error" || !!pollError;
   const showSelector = !running && !finished;
   const estimate = estimateSelectionBytes(media, selection);
+  const canDownload =
+    selection.mode === "audio"
+      ? media.hasAudio
+      : media.hasVideo &&
+        media.videoVariants.some((v) => v.container === (selection.container ?? "mp4"));
 
   const metaParts = [
     media.durationSec != null ? formatDuration(media.durationSec) : null,
@@ -128,6 +133,7 @@ export function Dossier({
                 size="medium"
                 leadingIcon={Download}
                 onClick={onDownload}
+                disabled={!canDownload}
                 className="shrink-0 px-6"
               >
                 Download

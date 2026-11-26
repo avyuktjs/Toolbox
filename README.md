@@ -135,6 +135,7 @@ NEXT_BUILD_WORKERS=2 npm run build
 - **Privacy:** those two upload paths live in `.toolbox-tmp/` under the project root and are swept after 15 minutes. History is `localStorage` on your device; the server never knows what you did.
 - **No AI:** no upscaling, no "enhance", no generated filler. Every tool does a deterministic job you can verify.
 - **Limits:** 300 MB per media upload, rate-limited per IP (20/min inspect, 10/min convert/download), single-node deploys.
+- **VPS notes:** keep `yt-dlp` current (`yt-dlp -U`, or `pipx upgrade yt-dlp`) and install [Deno](https://deno.com/) — yt-dlp uses it to solve YouTube's JS challenges. If YouTube still refuses a public video, the VPS IP is flagged; use `YTDLP_COOKIES` or `YTDLP_PROXY`. A recent yt-dlp plus a JS runtime fixes most “unavailable” errors that only happen on the server.
 - **Deploy notes:** the production build uses `prebuild` to copy the pdfjs worker into `public/`. Here it runs under pm2 behind a Cloudflare tunnel.
 
 ## Contributing

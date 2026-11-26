@@ -39,23 +39,28 @@ function OptionCard({
   title,
   sub,
   onClick,
+  disabled = false,
 }: {
   active: boolean;
   title: string;
   sub: string;
   onClick: () => void;
+  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       role="radio"
       aria-checked={active}
+      disabled={disabled}
       onClick={onClick}
       className={cn(
         "flex items-center gap-3 rounded-2xl border p-3 text-left transition-all duration-150",
         active
           ? "border-ink bg-ink text-panel"
-          : "border-line bg-panel text-ink hover:border-line2 hover:bg-sunken/60",
+          : disabled
+            ? "cursor-not-allowed border-line bg-sunken/40 text-ink3"
+            : "border-line bg-panel text-ink hover:border-line2 hover:bg-sunken/60",
       )}
     >
       <span
@@ -177,8 +182,15 @@ export function FormatSelector({
                   <OptionCard
                     key={c}
                     active={container === c}
+                    disabled={!available}
                     title={c.toUpperCase()}
-                    sub={c === "mp4" ? "H.264 · plays everywhere" : "VP9 · smaller files"}
+                    sub={
+                      !available
+                        ? "Not offered by this source"
+                        : c === "mp4"
+                          ? "H.264 · plays everywhere"
+                          : "VP9 · smaller files"
+                    }
                     onClick={() => {
                       const nextHeights = [...new Set(
                         media.videoVariants.filter((v) => v.container === c && v.height >= 360).map((v) => v.height),

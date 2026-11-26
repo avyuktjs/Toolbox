@@ -104,13 +104,15 @@ const YOUTUBE_FALLBACKS: string[][] = [
 function isRetryableYoutubeFailure(stderr: string): boolean {
   const text = stderr.toLowerCase();
   if (
-    /private video|video is private|members-only|video unavailable|has been removed|terminated|copyright|does not exist|account.*(closed|terminated)/.test(
+    /private video|video is private|members-only|has been removed|terminated|copyright|does not exist|account.*(closed|terminated)/.test(
       text,
     )
   ) {
     return false;
   }
-  return /sign in to confirm|not a bot|login_required|use --cookies|cookies-from-browser|no video formats|no formats found|page needs to be reloaded|unable to extract|failed to extract|requested format is not available|only images are available|unable to download video data|http error (403|429)|forbidden|too many requests|temporarily unavailable/.test(
+  // "Unavailable" is client-specific surprisingly often: YouTube says it to
+  // one player while another still returns the video, so try the others.
+  return /sign in to confirm|not a bot|login_required|use --cookies|cookies-from-browser|no video formats|no formats found|page needs to be reloaded|unable to extract|failed to extract|requested format is not available|only images are available|unable to download video data|http error (403|429)|forbidden|too many requests|temporarily unavailable|video unavailable|this video is unavailable|video is unavailable/.test(
     text,
   );
 }

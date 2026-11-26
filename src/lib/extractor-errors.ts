@@ -20,11 +20,15 @@ export function mapExtractorError(stderr: string): string {
   if (/private video|video is private|members-only|sign in to view this video/.test(text)) {
     return "This video is private or members-only. Toolbox doesn't touch login-walled media.";
   }
+  // A format error is not a missing video — say so instead of blaming the source.
+  if (/requested format is not available|format is not available|only images are available/.test(text)) {
+    return "That exact format isn't offered by this source — pick another resolution or container and try again.";
+  }
   if (/unsupported url|unable to extract|no video formats/.test(text)) {
     return "That page doesn't look like a supported media source.";
   }
   if (/not available|unavailable|removed|copyright|terminated/.test(text)) {
-    return "This video isn't available — it may have been removed or blocked by the source.";
+    return "This video isn't available from this server — it may be removed, private, age-restricted, or blocked for this server's region/IP. If it plays in your browser, the server's IP is the likely blocker; the host operator can configure YTDLP_COOKIES or YTDLP_PROXY. Toolbox doesn't bypass those restrictions.";
   }
   if (/timed out|timeout|network|resolve|unreachable|econn/.test(text)) {
     return "The source didn't respond in time. Check your connection and try again.";
