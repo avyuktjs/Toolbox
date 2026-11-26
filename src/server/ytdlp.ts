@@ -11,7 +11,7 @@ import { z } from "zod";
 import type { DownloadSelection, InspectedMedia, InspectedVideoVariant } from "@/types/media";
 import { sanitizeFilename } from "@/lib/format";
 import { mapExtractorError } from "@/lib/extractor-errors";
-import { JOBS_DIR, completeJob, failJob, updateJob, attachChild } from "./jobs";
+import { JOBS_DIR, completeJob, failJob, updateJob, attachChild, getJobSnapshot } from "./jobs";
 
 export const mediaUrlSchema = z
   .string()
@@ -50,19 +50,69 @@ export function isPrivateHost(u: string): boolean {
 }
 
 const YTDLP = "yt-dlp";
+const FFPROBE = "ffprobe";
 
 /**
  * Operator-only network config. Never exposed through the UI.
- * YTDLP_PROXY is a proxy URL; YTDLP_COOKIES is a path to a cookies.txt file.
- * Both are opt-in and only read at process start, not per request.
+ * YTDLP_PROXY is a proxy URL; YTDLP_COOKIES is a path to a cookies.txt file;
+ * YTDLP_COOKIES_FROM_BROWSER names a local browser profile (e.g. firefox).
+ * All are opt-in and only read at process start, not per request.
  */
 function networkArgs(): string[] {
   const args: string[] = [];
   const proxy = process.env.YTDLP_PROXY?.trim();
   if (proxy) args.push("--proxy", proxy);
   const cookies = process.env.YTDLP_COOKIES?.trim();
-  if (cookies && fs.existsSync(cookies)) args.push("--cookies", cookies);
+  if (cookies && fs.existsSync(cookies)) {
+    args.push("--cookies", cookies);
+  } else {
+    const browser = process.env.YTDLP_COOKIES_FROM_BROWSER?.trim();
+    if (browser) args.push("--cookies-from-browser", browser);
+  }
   return args;
+}
+
+function isYouTubeUrl(raw: string): boolean {
+  try {
+    const host = new URL(raw).hostname.toLowerCase();
+    return (
+      host === "youtu.be" ||
+      host === "youtube.com" ||
+      host.endsWith(".youtube.com") ||
+      host === "youtube-nocookie.com" ||
+      host.endsWith(".youtube-nocookie.com")
+    );
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * YouTube's player clients fail independently: one gets a bot challenge while
+ * another still answers. These are tried in order when the default client is
+ * challenged. The last one asks yt-dlp for every client it knows about.
+ */
+const YOUTUBE_FALLBACKS: string[][] = [
+  ["--extractor-args", "youtube:player_client=tv_embedded"],
+  ["--extractor-args", "youtube:player_client=android_vr"],
+  ["--extractor-args", "youtube:player_client=visionos"],
+  ["--extractor-args", "youtube:player_client=web_embedded"],
+  ["--extractor-args", "youtube:player_client=default,all;formats=duplicate,missing_pot"],
+];
+
+/** A YouTube failure that another player client might solve. */
+function isRetryableYoutubeFailure(stderr: string): boolean {
+  const text = stderr.toLowerCase();
+  if (
+    /private video|video is private|members-only|video unavailable|has been removed|terminated|copyright|does not exist|account.*(closed|terminated)/.test(
+      text,
+    )
+  ) {
+    return false;
+  }
+  return /sign in to confirm|not a bot|login_required|use --cookies|cookies-from-browser|no video formats|no formats found|page needs to be reloaded|unable to extract|failed to extract|requested format is not available|only images are available|unable to download video data|http error (403|429)|forbidden|too many requests|temporarily unavailable/.test(
+    text,
+  );
 }
 
 function runCapture(args: string[], timeoutMs: number): Promise<{ stdout: string; stderr: string; code: number | null }> {
@@ -85,6 +135,180 @@ function runCapture(args: string[], timeoutMs: number): Promise<{ stdout: string
       resolve({ stdout, stderr, code });
     });
   });
+}
+
+/** Inspect a URL, retrying YouTube with other player clients when challenged. */
+async function captureInspect(url: string): Promise<{ stdout: string; stderr: string; code: number | null }> {
+  const baseArgs = [
+    "--dump-single-json",
+    "--no-playlist",
+    "--skip-download",
+    "--no-warnings",
+    "--socket-timeout",
+    "12",
+    "--retries",
+    "2",
+    ...networkArgs(),
+  ];
+  // Fallbacks are bounded: a challenged host must not turn one inspection
+  // into a long queue of extractor processes.
+  const deadline = Date.now() + 90_000;
+  let last = await runCapture([...baseArgs, url], 40_000);
+  if (last.code === 0 || !isYouTubeUrl(url) || !isRetryableYoutubeFailure(last.stderr)) return last;
+
+  let lastError: unknown = null;
+  for (const extra of YOUTUBE_FALLBACKS) {
+    const remaining = deadline - Date.now();
+    if (remaining < 5_000) break;
+    try {
+      last = await runCapture([...baseArgs, ...extra, url], Math.min(25_000, remaining));
+    } catch (err) {
+      lastError = err;
+      continue;
+    }
+    if (last.code === 0) return last;
+    if (!isRetryableYoutubeFailure(last.stderr)) return last;
+  }
+  if (lastError && last.code !== 0) throw lastError;
+  return last;
+}
+
+/* ---------------- direct-file probing ---------------- */
+
+interface RawProbeStream {
+  codec_type?: string;
+  codec_name?: string;
+  width?: number;
+  height?: number;
+  bit_rate?: string;
+  disposition?: { attached_pic?: number };
+}
+
+interface RawProbe {
+  streams?: RawProbeStream[];
+  format?: {
+    duration?: string;
+    size?: string;
+    format_name?: string;
+    tags?: Record<string, string>;
+  };
+}
+
+/**
+ * Direct media links (a plain .mp4, for example) come back from yt-dlp with no
+ * codec, height or duration metadata. ffprobe fills those in so the picker can
+ * offer a real resolution instead of showing an empty dossier.
+ */
+function probeDirectMedia(url: string): Promise<RawProbe | null> {
+  return new Promise((resolve) => {
+    let settled = false;
+    const done = (value: RawProbe | null) => {
+      if (settled) return;
+      settled = true;
+      resolve(value);
+    };
+
+    let child: ReturnType<typeof spawn>;
+    try {
+      child = spawn(
+        FFPROBE,
+        ["-v", "error", "-print_format", "json", "-show_format", "-show_streams", url],
+        { stdio: ["ignore", "pipe", "ignore"] },
+      );
+    } catch {
+      done(null);
+      return;
+    }
+
+    let stdout = "";
+    const timer = setTimeout(() => {
+      try {
+        child.kill("SIGTERM");
+      } catch {
+        /* already gone */
+      }
+      done(null);
+    }, 20_000);
+
+    child.stdout?.on("data", (d: Buffer) => (stdout += d));
+    child.on("error", () => {
+      clearTimeout(timer);
+      done(null);
+    });
+    child.on("close", (code) => {
+      clearTimeout(timer);
+      if (code !== 0) {
+        done(null);
+        return;
+      }
+      try {
+        done(JSON.parse(stdout) as RawProbe);
+      } catch {
+        done(null);
+      }
+    });
+  });
+}
+
+function containerFromProbe(url: string, formatName: string | null, codec: string | null): "mp4" | "webm" | null {
+  let ext = "";
+  try {
+    ext = path.extname(new URL(url).pathname).slice(1).toLowerCase();
+  } catch {
+    /* ignore */
+  }
+  if (ext === "mp4" || ext === "m4v" || ext === "mov") return "mp4";
+  if (ext === "webm") return "webm";
+  const format = (formatName ?? "").toLowerCase();
+  if (format.includes("webm")) return "webm";
+  if (format.includes("mp4") || format.includes("mov")) return "mp4";
+  if (codec === "vp8" || codec === "vp9" || codec === "av1") return "webm";
+  return codec ? "mp4" : null;
+}
+
+function applyProbe(base: InspectedMedia, probe: RawProbe, url: string): InspectedMedia {
+  const streams = probe.streams ?? [];
+  const videoStream = streams.find((s) => s.codec_type === "video" && !s.disposition?.attached_pic);
+  const audioStream = streams.find((s) => s.codec_type === "audio");
+  const duration = probe.format?.duration ? Number.parseFloat(probe.format.duration) : null;
+  const totalBytes = probe.format?.size ? Number.parseInt(probe.format.size, 10) : null;
+  const audioBytes =
+    audioStream?.bit_rate && duration ? Math.round((Number(audioStream.bit_rate) * duration) / 8) : null;
+  const videoBytes =
+    videoStream?.bit_rate && duration ? Math.round((Number(videoStream.bit_rate) * duration) / 8) : null;
+  const combined =
+    totalBytes ?? (videoBytes != null || audioBytes != null ? (videoBytes ?? 0) + (audioBytes ?? 0) : null);
+  const container = containerFromProbe(url, probe.format?.format_name ?? null, videoStream?.codec_name ?? null);
+  const height = videoStream?.height ?? null;
+
+  const variants: InspectedVideoVariant[] =
+    videoStream && height && container
+      ? [
+          {
+            height,
+            container,
+            vcodec: videoStream.codec_name ?? null,
+            vbitrateKbps: videoStream.bit_rate ? Math.round(Number(videoStream.bit_rate) / 1000) : null,
+            estimatedBytes: combined,
+          },
+        ]
+      : [];
+
+  const probedTitle = probe.format?.tags?.title?.trim();
+
+  return {
+    ...base,
+    title: probedTitle || base.title,
+    durationSec: base.durationSec ?? (duration != null && Number.isFinite(duration) ? duration : null),
+    hasVideo: Boolean(videoStream),
+    hasAudio: Boolean(audioStream),
+    videoVariants: variants.length > 0 ? variants : base.videoVariants,
+    maxHeight: height ?? base.maxHeight,
+    bestAudioBytes: audioBytes ?? base.bestAudioBytes,
+    audioBitrateKbps: audioStream?.bit_rate
+      ? Math.round(Number(audioStream.bit_rate) / 1000)
+      : base.audioBitrateKbps,
+  };
 }
 
 /* ---------------- inspect ---------------- */
@@ -152,10 +376,7 @@ export async function inspectUrl(rawUrl: string): Promise<InspectResult> {
 
   let res: { stdout: string; stderr: string; code: number | null };
   try {
-    res = await runCapture(
-      ["--dump-single-json", "--no-playlist", "--skip-download", "--no-warnings", "--socket-timeout", "12", "--retries", "2", ...networkArgs(), url],
-      50_000,
-    );
+    res = await captureInspect(url);
   } catch (err) {
     return { ok: false, message: err instanceof Error ? err.message : "Could not reach the source." };
   }
@@ -215,7 +436,7 @@ export async function inspectUrl(rawUrl: string): Promise<InspectResult> {
       .sort((a, b) => (b.width ?? 0) - (a.width ?? 0))[0]?.url ??
     (typeof data.thumbnail === "string" && data.thumbnail.startsWith("https://") ? data.thumbnail : null);
 
-  const media: InspectedMedia = {
+  let media: InspectedMedia = {
     id: String(data.id ?? ""),
     title: typeof data.title === "string" ? data.title : "Untitled media",
     webpageUrl: typeof data.webpage_url === "string" ? data.webpage_url : url,
@@ -232,6 +453,20 @@ export async function inspectUrl(rawUrl: string): Promise<InspectResult> {
     bestAudioBytes,
     audioBitrateKbps,
   };
+
+  // A direct media link gives yt-dlp no codec/dimension metadata. Probe it so
+  // the picker isn't empty (this is also what makes the built-in demo useful).
+  const directLike =
+    data.direct === true ||
+    (formats.length > 0 &&
+      formats.every(
+        (f) => !f.vcodec && !f.acodec && ["mp4", "webm", "m4a", "mp3", "aac", "wav"].includes(f.ext ?? ""),
+      ));
+  if ((!hasVideo || !hasAudio) && directLike) {
+    const probe = await probeDirectMedia(url);
+    if (probe) media = applyProbe(media, probe, url);
+  }
+
   cacheSet(url, media);
   return { ok: true, media };
 }
@@ -243,7 +478,7 @@ export function startDownload(jobId: string, url: string, title: string | null, 
   fs.mkdirSync(jobDir, { recursive: true });
   const template = path.join(jobDir, "source.%(ext)s");
 
-  const args: string[] = [
+  const baseArgs: string[] = [
     "--no-playlist",
     "--newline",
     "--no-colors",
@@ -257,10 +492,10 @@ export function startDownload(jobId: string, url: string, title: string | null, 
   let expectedExt: string;
   if (selection.mode === "audio") {
     const fmt = selection.audioFormat ?? "mp3";
-    args.push("-x", "--audio-format", fmt);
+    baseArgs.push("-x", "--audio-format", fmt);
     if (fmt !== "wav") {
       const br = selection.audioBitrate ?? 192;
-      args.push("--postprocessor-args", `ffmpeg:-b:a ${br}k`);
+      baseArgs.push("--postprocessor-args", `ffmpeg:-b:a ${br}k`);
     }
     expectedExt = fmt;
   } else {
@@ -268,23 +503,28 @@ export function startDownload(jobId: string, url: string, title: string | null, 
     const container = selection.container ?? "mp4";
     const hFilter = height ? `[height<=${height}]` : "";
     if (container === "webm") {
-      args.push("-f", `bv*${hFilter}[ext=webm]+ba/b${hFilter}[ext=webm]/bv*${hFilter}+ba/b`);
-      args.push("--merge-output-format", "webm");
+      baseArgs.push("-f", `bv*${hFilter}[ext=webm]+ba/b${hFilter}[ext=webm]/bv*${hFilter}+ba/b`);
+      baseArgs.push("--merge-output-format", "webm");
       expectedExt = "webm";
     } else {
-      args.push("-f", `bv*${hFilter}[ext=mp4]+ba[ext=m4a]/bv*${hFilter}[ext=mp4]+ba/b${hFilter}[ext=mp4]/b${hFilter}/bv*+ba/b`);
-      args.push("--merge-output-format", "mp4");
+      baseArgs.push("-f", `bv*${hFilter}[ext=mp4]+ba[ext=m4a]/bv*${hFilter}[ext=mp4]+ba/b${hFilter}[ext=mp4]/b${hFilter}/bv*+ba/b`);
+      baseArgs.push("--merge-output-format", "mp4");
       expectedExt = "mp4";
     }
   }
-  args.push(url);
 
-  const child = spawn(YTDLP, args, { stdio: ["ignore", "pipe", "pipe"] });
-  attachChild(jobId, child);
-  updateJob(jobId, { stage: "Downloading", percent: 0 });
-
+  // Reuse the same fallback list as inspection so a format found on one
+  // player client can still be downloaded by that client.
+  const attempts: string[][] = isYouTubeUrl(url) ? [[], ...YOUTUBE_FALLBACKS] : [[]];
+  let attempt = 0;
   let stderrTail = "";
   let stdoutRest = "";
+
+  const clearJobDir = () => {
+    for (const entry of fs.readdirSync(jobDir)) {
+      fs.rmSync(path.join(jobDir, entry), { recursive: true, force: true });
+    }
+  };
 
   const handleLine = (line: string) => {
     const l = line.trim();
@@ -318,15 +558,8 @@ export function startDownload(jobId: string, url: string, title: string | null, 
     stdoutRest = lines.pop() ?? "";
     for (const line of lines) handleLine(line);
   };
-  child.stdout.on("data", (d: Buffer) => pump(d, "out"));
-  child.stderr.on("data", (d: Buffer) => pump(d, "err"));
 
-  child.on("error", () => failJob(jobId, "Couldn't start yt-dlp on this server."));
-  child.on("close", (code) => {
-    if (code !== 0) {
-      failJob(jobId, mapExtractorError(stderrTail));
-      return;
-    }
+  const finalise = () => {
     try {
       const files = fs
         .readdirSync(jobDir)
@@ -350,5 +583,51 @@ export function startDownload(jobId: string, url: string, title: string | null, 
     } catch {
       failJob(jobId, "Couldn't finalise the downloaded file.");
     }
-  });
+  };
+
+  const runAttempt = () => {
+    if (attempt > 0) {
+      updateJob(jobId, { stage: "Trying another player", percent: null, speed: null, eta: null });
+    }
+    stderrTail = "";
+    stdoutRest = "";
+
+    const child = spawn(YTDLP, [...baseArgs, ...attempts[attempt], url], {
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    attachChild(jobId, child);
+    if (attempt === 0) updateJob(jobId, { stage: "Downloading", percent: 0 });
+
+    child.stdout.on("data", (d: Buffer) => pump(d, "out"));
+    child.stderr.on("data", (d: Buffer) => pump(d, "err"));
+
+    child.on("error", () => failJob(jobId, "Couldn't start yt-dlp on this server."));
+    child.on("close", (code) => {
+      // The job may have been cancelled or swept while this attempt was
+      // running — never resurrect it by finalising a stale child process.
+      if (getJobSnapshot(jobId)?.state !== "running") return;
+
+      if (code === 0) {
+        finalise();
+        return;
+      }
+
+      const canRetry =
+        attempt + 1 < attempts.length && isRetryableYoutubeFailure(stderrTail);
+      if (canRetry) {
+        attempt += 1;
+        try {
+          clearJobDir();
+        } catch {
+          /* a file may still be settling; the next attempt overwrites it */
+        }
+        runAttempt();
+        return;
+      }
+
+      failJob(jobId, mapExtractorError(stderrTail));
+    });
+  };
+
+  runAttempt();
 }
