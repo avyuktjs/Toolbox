@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { ExifTool } from "@/features/image/exif-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/exif" },
   title: "EXIF Viewer",
   description: "Camera, exposure and GPS metadata — inspect it, then strip it with one click.",
 };

@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { DiffTool } from "@/features/tools/diff-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/diff" },
   title: "Text Diff",
   description: "A line-based diff with zero dependencies — paste before and after, read the deltas.",
 };

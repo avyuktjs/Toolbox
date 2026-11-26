@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { AsciiTool } from "@/features/image/ascii-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/ascii" },
   title: "ASCII Art",
   description: "Any image becomes characters — copy the text or download it as a PNG.",
 };

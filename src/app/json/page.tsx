@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { JsonTool } from "@/features/tools/json-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/json" },
   title: "JSON Formatter",
   description: "Validate, prettify, minify — with the error position when it breaks.",
 };

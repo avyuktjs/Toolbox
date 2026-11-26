@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { CompressTool } from "@/features/image/compress-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/compress" },
   title: "Image Compressor",
   description: "The encoder binary-searches quality, then dimensions, until the file fits your target.",
 };

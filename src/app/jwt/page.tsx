@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { JwtTool } from "@/features/tools/jwt-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/jwt" },
   title: "JWT Decoder",
   description: "Header, payload, expiry verdict and claim timestamps — decoded locally. Never verified, never sent anywhere.",
 };

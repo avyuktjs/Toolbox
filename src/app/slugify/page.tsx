@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { SlugifyTool } from "@/features/tools/slugify-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/slugify" },
   title: "Slugify",
   description: "Accents folded, punctuation dropped — one slug or a batch, one per line.",
 };

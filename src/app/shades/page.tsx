@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { ShadesTool } from "@/features/tools/shades-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/shades" },
   title: "Shade Scale",
   description: "A full 50-950 ladder from any color — CSS variables, Tailwind @theme or JSON out.",
 };

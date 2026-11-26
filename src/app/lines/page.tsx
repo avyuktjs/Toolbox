@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { LinesTool } from "@/features/tools/lines-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/lines" },
   title: "Line Tools",
   description: "Sort, dedupe, reverse, shuffle, trim, number and case-flip — paste a list, get a list.",
 };

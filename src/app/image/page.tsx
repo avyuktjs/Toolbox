@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { ImageTool } from "@/features/image/image-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/image" },
   title: "Image Studio",
   description:
     "PNG, JPEG, WebP and friends — convert, resize, crop, rotate and compress images right in your browser. No uploads, no sign-up, no watermark.",

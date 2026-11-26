@@ -3,6 +3,7 @@ import Link from "next/link";
 import { FaqAccordion } from "@/features/faq/faq-accordion";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/faq" },
   title: "FAQ",
   description:
     "Answers about Toolbox: what it is, where your files go, why some videos won't download, what's free, and who built it.",

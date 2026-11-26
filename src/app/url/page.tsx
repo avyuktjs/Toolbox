@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { UrlTool } from "@/features/tools/url-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/url" },
   title: "URL Encoder",
   description: "Percent-encode or decode — exactly the bytes you meant.",
 };

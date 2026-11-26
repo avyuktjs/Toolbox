@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { MarkdownTool } from "@/features/tools/markdown-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/markdown" },
   title: "Markdown Preview",
   description: "GFM with tables and task lists — sanitized, local, copy-ready as HTML.",
 };

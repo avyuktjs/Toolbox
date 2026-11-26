@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { CronTool } from "@/features/tools/cron-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/cron" },
   title: "Cron Explainer",
   description: "Five-field cron in plain English — plus the next five actual run times.",
 };

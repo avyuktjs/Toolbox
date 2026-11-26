@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { ShadowTool } from "@/features/tools/shadow-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/shadow" },
   title: "Box Shadow Studio",
   description: "Layered shadows with insets, spread, blur and opacity — copy real CSS.",
 };

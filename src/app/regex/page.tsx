@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { RegexTool } from "@/features/tools/regex-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/regex" },
   title: "Regex Tester",
   description: "Pattern, flags, live highlights and capture groups — with a replace preview, all in this tab.",
 };

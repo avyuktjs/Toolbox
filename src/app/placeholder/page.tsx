@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { PlaceholderTool } from "@/features/tools/placeholder-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/placeholder" },
   title: "Placeholder Images",
   description: "Canvas-rendered placeholders at any size — blueprint grid, custom label, PNG or JPEG.",
 };

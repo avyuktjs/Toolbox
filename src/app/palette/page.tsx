@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { PaletteTool } from "@/features/image/palette-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/palette" },
   title: "Palette Extractor",
   description: "Median-cut quantization finds the colors that dominate an image. Click to copy.",
 };

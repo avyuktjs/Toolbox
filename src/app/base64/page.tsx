@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { Base64Tool } from "@/features/tools/base64-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/base64" },
   title: "Base64",
   description: "Encode and decode text, UTF-8 safe, with live two-way feedback.",
 };

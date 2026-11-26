@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { HashTool } from "@/features/tools/hash-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/hash" },
   title: "Hash Generator",
   description: "SHA-256, SHA-1 and SHA-512 of anything you type. Computed locally, always.",
 };

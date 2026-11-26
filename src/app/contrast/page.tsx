@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { ContrastTool } from "@/features/tools/contrast-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/contrast" },
   title: "Contrast Checker",
   description: "WCAG AA and AAA verdicts for any foreground/background pair.",
 };

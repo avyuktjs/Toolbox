@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { LoremTool } from "@/features/tools/lorem-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/lorem" },
   title: "Lorem Ipsum",
   description: "Deterministic placeholder text — same seed, same paragraphs, every time.",
 };

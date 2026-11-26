@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { TimestampTool } from "@/features/tools/timestamp-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/timestamp" },
   title: "Unix Timestamp",
   description: "Convert epoch to date and back. Live clock included, no library required.",
 };

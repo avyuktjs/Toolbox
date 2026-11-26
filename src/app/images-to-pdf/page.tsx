@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { ImagesToPdfTool } from "@/features/image/images-to-pdf-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/images-to-pdf" },
   title: "Images to PDF",
   description: "Receipts, whiteboards, screenshots — reorder, pick a page size, one clean PDF out.",
 };

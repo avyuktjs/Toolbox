@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { CaseTool } from "@/features/tools/case-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/case-converter" },
   title: "Case Converter",
   description: "camelCase to CONSTANT_CASE and everything between — one click to copy any row.",
 };

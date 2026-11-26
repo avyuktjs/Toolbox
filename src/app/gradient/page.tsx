@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { GradientTool } from "@/features/tools/gradient-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/gradient" },
   title: "Gradient Studio",
   description: "Linear, radial and conic — layered stops, presets, and pure CSS out.",
 };

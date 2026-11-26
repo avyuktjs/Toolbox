@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { RedactTool } from "@/features/image/redact-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/redact" },
   title: "Redact",
   description: "Pixelate, blur or blackout emails, tokens and faces — burned in before export.",
 };

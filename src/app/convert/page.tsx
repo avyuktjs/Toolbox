@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Converter } from "@/features/converter/converter";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/convert" },
   title: "Converter",
   description:
     "Drop local files and convert them server-side: MP4, WebM, MP3, WAV, AAC. Extract audio from video, swap containers, tune quality — powered by FFmpeg.",

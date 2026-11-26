@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { DataConvertTool } from "@/features/tools/data-convert-tool";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/data-convert" },
   title: "Data Converter",
   description: "JSON, YAML, TOML and CSV — parse, convert and copy, round-trip safe.",
 };

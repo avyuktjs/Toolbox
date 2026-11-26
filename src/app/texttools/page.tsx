@@ -6,6 +6,7 @@ import { BUNDLES } from "@/features/tools/bundles";
 const bundle = BUNDLES.find((b) => b.slug === "/texttools")!;
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/texttools" },
   title: "TextTools Bundle",
   description: bundle.description,
 };

@@ -3,6 +3,7 @@ import { ToolShell } from "@/features/tools/tool-shell";
 import { SupportedSites } from "@/features/supported-sites/supported-sites";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/sites" },
   title: "Supported sites",
   description:
     "The Downloader reads public pages on yt-dlp's 1000+ supported sites. This grid shows the popular ones — every tile links to the site itself.",
