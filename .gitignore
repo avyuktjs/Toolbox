@@ -41,6 +41,10 @@ yarn-error.log*
 next-env.d.ts
 .toolbox-tmp/
 
+# yt-dlp session cookies
+cookies.txt
+*.cookies.txt
+
 # agent harness files
 /AGENTS.md
 
